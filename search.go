@@ -1,5 +1,6 @@
 package itertools
 
+// Node 搜索节点
 type Node struct {
 	priority int
 	point    Point
@@ -13,9 +14,10 @@ func abs(n int) int {
 }
 
 func heuristic(p1, p2 Point) int {
-	return abs(p1.x-p2.x) + abs(p1.y-p2.y)
+	return abs(p1.X-p2.X) + abs(p1.Y-p2.Y)
 }
 
+// AstarSearch astart搜索算法
 func AstarSearch(graph *SquareGrid, start, end Point) Points {
 	cameFrom := make(map[Point]*Point)
 	costSoFar := make(map[Point]int)

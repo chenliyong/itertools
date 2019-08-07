@@ -4,6 +4,7 @@ import (
 	"sort"
 )
 
+// PermWithBest 全排列
 type PermWithBest struct {
 	// 全排列
 	population [][]int
@@ -11,6 +12,7 @@ type PermWithBest struct {
 	fitness func([]int) float32
 }
 
+// NewPermWithBest 返回全排列算法类
 func NewPermWithBest(size int, fitness func([]int) float32) *PermWithBest {
 	population := [][]int{}
 	// 直接得到所有全排列
@@ -23,6 +25,7 @@ func NewPermWithBest(size int, fitness func([]int) float32) *PermWithBest {
 	}
 }
 
+// Run 执行迭代
 func (p *PermWithBest) Run() ([]int, float32) {
 	best := p.population[p.ranked()[0].Index]
 	fitness := p.fitness(best)

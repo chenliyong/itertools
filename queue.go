@@ -2,6 +2,7 @@ package itertools
 
 import "sync"
 
+// Queue 队列
 type Queue struct {
 	sync.Mutex
 	elements []interface{}

@@ -3,13 +3,13 @@ package itertools
 import "fmt"
 
 type Point struct {
-	x, y int
+	X, Y int
 }
 
 func NewPoint(x, y int) Point {
 	return Point{
-		x: x,
-		y: y,
+		X: x,
+		Y: y,
 	}
 }
 
@@ -22,23 +22,23 @@ func (p Points) Reverse() {
 }
 
 type SquareGrid struct {
-	width, height int
-	walls         Points // 障碍物
-	shelfs        Points // 货架
-	weights       map[Point]int
+	Width, Height int
+	Walls         Points // 障碍物
+	Shelfs        Points // 货架
+	Weights       map[Point]int
 }
 
 func NewSquareGrid(w, h int) *SquareGrid {
 	return &SquareGrid{
-		width:  w,
-		height: h,
+		Width:  w,
+		Height: h,
 	}
 }
 
 func (g *SquareGrid) AddWall(start Point, w, h int) {
 	for i := 0; i < w; i++ {
 		for j := 0; j < h; j++ {
-			g.walls = append(g.walls, NewPoint(start.x+i, start.y+j))
+			g.Walls = append(g.Walls, NewPoint(start.X+i, start.Y+j))
 		}
 	}
 }
@@ -48,23 +48,23 @@ func (g *SquareGrid) AddShelf(start Point, width, quantity, corridorWidth, corri
 	for n := 0; n < corridorNum; n++ {
 		for y := 0; y < quantity; y++ {
 			for x := 0; x < width; x++ {
-				p := NewPoint(start.x+x, start.y+y)
+				p := NewPoint(start.X+x, start.Y+y)
 				if g.InBounds(p) {
-					g.shelfs = append(g.shelfs, p)
+					g.Shelfs = append(g.Shelfs, p)
 				}
 			}
 		}
-		start = NewPoint(start.x+width+corridorWidth, start.y)
+		start = NewPoint(start.X+width+corridorWidth, start.Y)
 	}
 
 }
 
 func (g *SquareGrid) InBounds(p Point) bool {
-	return 0 <= p.x && p.x < g.width && 0 <= p.y && p.y < g.height
+	return 0 <= p.X && p.X < g.Width && 0 <= p.Y && p.Y < g.Height
 }
 
 func (g *SquareGrid) Passable(p Point) bool {
-	block := append(g.walls, g.shelfs...)
+	block := append(g.Walls, g.Shelfs...)
 	for _, w := range block {
 		if w == p {
 			return false
@@ -75,12 +75,12 @@ func (g *SquareGrid) Passable(p Point) bool {
 
 func (g *SquareGrid) Neighbors(p Point) Points {
 	points := Points{
-		Point{x: p.x + 1, y: p.y},
-		Point{x: p.x, y: p.y - 1},
-		Point{x: p.x - 1, y: p.y},
-		Point{x: p.x, y: p.y + 1},
+		Point{X: p.X + 1, Y: p.Y},
+		Point{X: p.X, Y: p.Y - 1},
+		Point{X: p.X - 1, Y: p.Y},
+		Point{X: p.X, Y: p.Y + 1},
 	}
-	if (p.x+p.y)%2 == 0 {
+	if (p.X+p.Y)%2 == 0 {
 		points.Reverse()
 	}
 	results := Points{}
@@ -93,27 +93,27 @@ func (g *SquareGrid) Neighbors(p Point) Points {
 }
 
 func (g *SquareGrid) Cost(from, to Point) int {
-	if v, ok := g.weights[to]; ok {
+	if v, ok := g.Weights[to]; ok {
 		return v
 	}
 	return 1
 }
 
 func (g *SquareGrid) getTile(id *Point, style map[string]Points) string {
-	if v, ok := style["path"]; ok {
-		if g.InPoints(id, v) {
-			return "*"
-		}
-	}
 	if v, ok := style["point"]; ok {
 		if g.InPoints(id, v) {
 			return "@"
 		}
 	}
-	if g.InPoints(id, g.shelfs) {
+	if v, ok := style["path"]; ok {
+		if g.InPoints(id, v) {
+			return "^"
+		}
+	}
+	if g.InPoints(id, g.Shelfs) {
 		return "#"
 	}
-	if g.InPoints(id, g.walls) {
+	if g.InPoints(id, g.Walls) {
 		return "x"
 	}
 	return "."
@@ -121,7 +121,7 @@ func (g *SquareGrid) getTile(id *Point, style map[string]Points) string {
 
 func (g *SquareGrid) InPoints(id *Point, points Points) bool {
 	for _, v := range points {
-		if v.x == id.x && v.y == id.y {
+		if v.X == id.X && v.Y == id.Y {
 			return true
 		}
 	}
@@ -129,10 +129,15 @@ func (g *SquareGrid) InPoints(id *Point, points Points) bool {
 }
 
 func (g *SquareGrid) Draw(style map[string]Points) {
-	for y := 0; y < g.height; y++ {
-		for x := 0; x < g.width; x++ {
-			fmt.Print(g.getTile(&Point{x: x, y: y}, style))
+	for y := 0; y < g.Height; y++ {
+		fmt.Printf("%02d", y)
+		for x := 0; x < g.Width; x++ {
+			fmt.Print(g.getTile(&Point{X: x, Y: y}, style) + " ")
 		}
 		fmt.Print("\n")
 	}
+	for i := 0; i < g.Width; i += 2 {
+		fmt.Printf("  %02d", i)
+	}
+	fmt.Print("\n")
 }
