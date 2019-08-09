@@ -158,6 +158,9 @@ func (g *GA) selection() [][]int {
 
 	//  精英选择
 	eliteSize := int(float32(g.popSize) * g.eliteProb)
+	if eliteSize == 0 {
+		eliteSize = 1
+	}
 	for i := 0; i < eliteSize; i++ {
 		results = append(results, g.population[popRanked[i].Index])
 	}
@@ -185,6 +188,9 @@ func (g *GA) bread() [][]int {
 
 	// 精英直接进入下一种群
 	eliteSize := int(float32(g.popSize) * g.eliteProb)
+	if eliteSize == 0 {
+		eliteSize = 1
+	}
 	for i := 0; i < eliteSize; i++ {
 		children = append(children, pool[i])
 	}
@@ -225,8 +231,8 @@ func defaultMutate(p []int, prob float32) []int {
 	if rand.Float32() < prob {
 		newOne := make([]int, len(p))
 		copy(newOne, p)
-		geneA := rand.Intn(len(p) - 1)
-		geneB := rand.Intn(len(p) - 1)
+		geneB := rand.Intn(len(p))
+		geneA := rand.Intn(geneB)
 
 		newOne[geneA], newOne[geneB] = newOne[geneB], newOne[geneA]
 		return newOne
@@ -236,10 +242,11 @@ func defaultMutate(p []int, prob float32) []int {
 
 // 默认交叉方法
 func defaultCrossover(p1 []int, p2 []int) []int {
-	geneA := rand.Intn(len(p1) - 1)
+	geneB := rand.Intn(len(p1))
+	geneA := rand.Intn(geneB)
 
 	newOne := []int{}
-	for i := 0; i < geneA; i++ {
+	for i := geneA; i < geneB; i++ {
 		newOne = append(newOne, p1[i])
 	}
 	for _, v := range p2 {
