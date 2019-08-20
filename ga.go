@@ -231,7 +231,7 @@ func defaultMutate(p []int, prob float32) []int {
 	if rand.Float32() < prob {
 		newOne := make([]int, len(p))
 		copy(newOne, p)
-		geneB := rand.Intn(len(p))
+		geneB := rand.Intn(len(p)-1) + 1
 		geneA := rand.Intn(geneB)
 
 		newOne[geneA], newOne[geneB] = newOne[geneB], newOne[geneA]
@@ -242,7 +242,7 @@ func defaultMutate(p []int, prob float32) []int {
 
 // 默认交叉方法
 func defaultCrossover(p1 []int, p2 []int) []int {
-	geneB := rand.Intn(len(p1))
+	geneB := rand.Intn(len(p1)-1) + 1
 	geneA := rand.Intn(geneB)
 
 	newOne := []int{}
